@@ -18,3 +18,16 @@ resource "aws_s3_bucket_acl" "transcriber_bucket_acl" {
 
   depends_on = [aws_s3_bucket_ownership_controls.transcriber_ownership_ctrl]
 }
+
+resource "aws_s3_bucket_notification" "s3_trigger_lambda" {
+  bucket = aws_s3_bucket.transcriber_bucket.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.start_transcription_function.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "audio/"
+    filter_suffix       = ".mpeg"
+  }
+
+  depends_on = [aws_lambda_permission.s3_trigger_lambda_permisson]
+}
