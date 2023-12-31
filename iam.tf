@@ -55,8 +55,8 @@ data "aws_iam_policy_document" "start_transcription_policy_document" {
 #   }
 # }
 
-resource "aws_iam_role" "lambda_role" {
-  name               = "lambda_role_010124"
+resource "aws_iam_role" "lambda_start_transcription_role" {
+  name               = "lambda_start_transcription_role_010124"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy_document.json
 
   managed_policy_arns = [
