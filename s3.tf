@@ -8,16 +8,16 @@ resource "aws_s3_bucket_ownership_controls" "transcriber_ownership_ctrl" {
   bucket = aws_s3_bucket.transcriber_bucket.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
-resource "aws_s3_bucket_acl" "transcriber_bucket_acl" {
-  bucket = aws_s3_bucket.transcriber_bucket.id
-  acl    = "private"
+# resource "aws_s3_bucket_acl" "transcriber_bucket_acl" {
+#   bucket = aws_s3_bucket.transcriber_bucket.id
+#   acl    = "private"
 
-  depends_on = [aws_s3_bucket_ownership_controls.transcriber_ownership_ctrl]
-}
+#   depends_on = [aws_s3_bucket_ownership_controls.transcriber_ownership_ctrl]
+# }
 
 resource "aws_s3_bucket_notification" "s3_trigger_lambda" {
   bucket = aws_s3_bucket.transcriber_bucket.id

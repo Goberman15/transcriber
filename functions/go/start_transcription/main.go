@@ -13,7 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/transcribe"
 	"github.com/aws/aws-sdk-go-v2/service/transcribe/types"
-	"github.com/joho/godotenv"
 )
 
 var transcribeClient *transcribe.Client
@@ -26,12 +25,6 @@ func init() {
 	}
 
 	transcribeClient = transcribe.NewFromConfig(cfg)
-
-	err = godotenv.Load()
-
-	if err != nil {
-		log.Fatalf("Fail to Load .env file: %v\n", err)
-	}
 }
 
 func Handler(ctx context.Context, evt events.S3Event) error {
@@ -48,19 +41,24 @@ func Handler(ctx context.Context, evt events.S3Event) error {
 		}
 
 		path := fmt.Sprintf("%s/%s", os.Getenv("transcript_prefix"), strings.Join(splittedKey[1:len(splittedKey)-1], "/"))
-		fileName := filepath.Base(splittedKey[len(splittedKey)-1])
+		audioFilename := splittedKey[len(splittedKey)-1]
+		ext := filepath.Ext(audioFilename)
+		fileName := audioFilename[:len(audioFilename)-len(ext)]
+		outputKey := fmt.Sprintf("%s/%s.json", path, fileName)
 
 		params := &transcribe.StartTranscriptionJobInput{
 			Media: &types.Media{
 				MediaFileUri: &sourcePath,
 			},
 			TranscriptionJobName: &fileName,
-			LanguageOptions: []types.LanguageCode{
-				types.LanguageCodeArSa,
-				types.LanguageCodeIdId,
-			},
+			LanguageCode:         types.LanguageCodeIdId,
+			// IdentifyMultipleLanguages: aws.Bool(true),
+			// LanguageOptions: []types.LanguageCode{
+			// 	types.LanguageCodeArSa,
+			// 	types.LanguageCodeIdId,
+			// },
 			OutputBucketName: &bucketName,
-			OutputKey:        &path,
+			OutputKey:        &outputKey,
 		}
 
 		fmt.Println("Start Transcription Job of", fileName)

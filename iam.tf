@@ -1,16 +1,17 @@
 resource "aws_iam_policy" "read_s3_policy" {
   name   = "read_s3_policy_010124"
-  policy = data.aws_iam_policy_document.read_s3_policy_document.json
+  policy = data.aws_iam_policy_document.write_s3_policy_document.json
   tags   = local.tags
 }
 
-data "aws_iam_policy_document" "read_s3_policy_document" {
+data "aws_iam_policy_document" "write_s3_policy_document" {
   statement {
-    sid    = "LambdaReadS3Policy010124"
+    sid    = "LambdaWriteS3Policy010124"
     effect = "Allow"
     actions = [
       "s3:GetObject",
-      "s3:ListBucket"
+      "s3:ListBucket",
+      "s3:putObject"
     ]
     resources = [
       "${aws_s3_bucket.transcriber_bucket.arn}/",
