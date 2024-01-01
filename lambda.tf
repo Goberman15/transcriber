@@ -7,6 +7,12 @@ resource "aws_lambda_function" "start_transcription_function" {
   runtime          = "go1.x"
   timeout          = 90
 
+  environment {
+    variables = {
+      transcript_prefix = local.transcript_prefix
+    }
+  }
+
   depends_on = [aws_cloudwatch_log_group.start_transcription_log_group]
 }
 

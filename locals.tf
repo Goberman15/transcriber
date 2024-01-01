@@ -6,4 +6,5 @@ locals {
   function_name = {
     start_transcription = "start_transcription_fn"
   }
+  transcript_prefix = "transcripts"
 }
