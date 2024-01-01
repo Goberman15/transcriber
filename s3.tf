@@ -29,5 +29,12 @@ resource "aws_s3_bucket_notification" "s3_trigger_lambda" {
     filter_suffix       = ".mpeg"
   }
 
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.start_transcription_function.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "audio/"
+    filter_suffix       = ".mp3"
+  }
+
   depends_on = [aws_lambda_permission.s3_trigger_lambda_permisson]
 }
